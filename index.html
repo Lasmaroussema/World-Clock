@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clock</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: white;
+        }
+
+        .clock-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333333;
+        }
+
+        .clock {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="clock-container">
+        <h1>World Clock</h1>
+        <div class="clocks" id="clocks"></div>
+    </div>
+</body>
+    <script src="https://unpkg.com/dayjs"></script>
+    <script>
+        const clocksContainer = document.getElementById('clocks');
+
+        async function fetchTimeForTimeZone(timezone) {
+            try {
+                console.log(timezone);
+                const response = await fetch(`https://worldtimeapi.org/api/timezone/${timezone}`);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Error fetching time:", error);
+            }
+        }
+
+        function updateClocks() {
+            const timezones = [
+                'America/New_York',
+                'Europe/London',
+                'Asia/Tokyo',
+                'Australia/Sydney',
+                'Africa/Tunis',
+            ];
+            
+            timezones.forEach(async (timezone) => {
+                const timeData = await fetchTimeForTimeZone(timezone);
+               
+                var formattedTime = dayjs(timeData.datetime).format('HH:mm:ss');
+                 formattedTime = timeData.datetime.slice(11, 19);
+                const clockHTML = `
+                    <div class="clock">
+                        <h2>${timezone.split('/')[0]}</h2>
+                        <p>${formattedTime}</p>
+                    </div>
+                `;
+                clocksContainer.innerHTML += clockHTML;
+            });
+        }
+
+        updateClocks();
+        //setInterval(updateClocks, 10000);
+    </script>
+
+
+</html>
